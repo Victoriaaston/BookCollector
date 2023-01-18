@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import Book
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
+from .forms import RatingForm
 
 # Create your views here.
 
@@ -18,7 +20,16 @@ def books_index(request):
 
 def books_detail(request, book_id):
     book = Book.objects.get(id=book_id)
-    return render(request, 'books/detail.html', {'book': book})
+    rating_form = RatingForm()
+    return render(request, 'books/detail.html', {'book': book, 'rating_form': rating_form})
+
+def add_rating(request, book_id):
+    form = RatingForm(request.POST)
+    if form.is_valid():
+        new_rating = form.save(commit=False)
+        new_rating.book_id = book_id
+        new_rating.save()
+        return redirect('detail', book_id=book_id)
 
 class BookCreate(CreateView):
     model = Book

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import Book
+from .models import Book, Opinion
 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -20,8 +20,13 @@ def books_index(request):
 
 def books_detail(request, book_id):
     book = Book.objects.get(id=book_id)
+    id_list = book.opinions.all().values_list('id')
+    opinions_book_doesnt_have = Opinion.objects.exclude(id__in=id_list)
     rating_form = RatingForm()
-    return render(request, 'books/detail.html', {'book': book, 'rating_form': rating_form})
+    return render(request, 'books/detail.html', { 'book': book, 
+    'rating_form': rating_form,
+    'opinions': opinions_book_doesnt_have
+     })
 
 def add_rating(request, book_id):
     form = RatingForm(request.POST)

@@ -11,11 +11,16 @@ STARS = (
 )
 
 # Create your models here.
+
+class Opinion(models.Model):
+    thoughts = models.TextField(max_length=250)
+    
 class Book(models.Model):
     name = models.CharField(max_length=75)
     genre = models.CharField(max_length=75)
     description = models.TextField(max_length=250)
     author = models.CharField(max_length=75)
+    opinions = models.ManyToManyField(Opinion)
 
     def __str__(self):
         return self.name

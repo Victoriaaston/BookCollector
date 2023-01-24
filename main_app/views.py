@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 
 from .models import Book, Opinion
 
+from django.views.generic import ListView, DetailView
+
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .forms import RatingForm
@@ -35,6 +37,10 @@ def add_rating(request, book_id):
         new_rating.book_id = book_id
         new_rating.save()
         return redirect('detail', book_id=book_id)
+    
+def assoc_opinion(request, book_id, opinion_id):
+    Book.objects.get(id=book_id).opinions.add(opinion_id)
+    return redirect ('detail', book_id=book_id)
 
 class BookCreate(CreateView):
     model = Book
@@ -48,3 +54,21 @@ class BookUpdate(UpdateView):
 class BookDelete(DeleteView):
     model = Book
     success_url = '/books/'
+
+class OpinionList(ListView):
+  model = Opinion
+
+class OpinionDetail(DetailView):
+  model = Opinion
+
+class OpinionCreate(CreateView):
+  model = Opinion
+  fields = '__all__'
+
+class OpinionUpdate(UpdateView):
+  model = Opinion
+  fields = ['name', 'color']
+
+class OpinionDelete(DeleteView):
+  model = Opinion
+  success_url = '/toys/'
